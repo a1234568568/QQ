@@ -1,50 +1,34 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+)
 
 func main() {
-	a := 1
-	b := 2
-	sum(a, b)
 
-	a = 10
-	b = 9
-	sum(a, b)
+	// 顯示檔案
+	http.Handle("/", http.FileServer(http.Dir("./public")))
 
-	a = 39
-	b = 10
-	sum(a, b)
+	// 自定義功能
+	http.HandleFunc("/shopee", func(w http.ResponseWriter, r *http.Request) {
+		// r 是從網頁讀取
+		// w 是寫到網頁
 
-	a = 5
-	b = 2
-	sum(a, b)
+		query := r.URL.Query()
+		buyWhat := query.Get("buy")
+		buyCount := query.Get("count")
+		fmt.Println("buy => ", buyWhat)
+		fmt.Println("count => ", buyCount)
 
-	a = 2
-	b = 2
-	sum(a, b)
+		var name string
+		name = "李嘉樺"
+		w.Write([]byte(name))
+	})
 
-	a = 6
-	b = 3
-	sum(a, b)
-
-	a = 50
-	b = 100
-	sum(a, b)
-
-	a = 60
-	b = 40
-	sum(a, b)
-
-	a = 15
-	b = 12
-	sum(a, b)
-
-	a = 100
-	b = 99
-	sum(a, b)
-}
-
-func sum(a int, b int) {
-	c := a*3 - b
-	fmt.Println(a, "* 3 -", b, "=", c, "!")
+	// 開始伺服器
+	err := http.ListenAndServe("localhost:3000", nil)
+	if err != nil {
+		fmt.Println("開始伺服器 有錯誤 =>", err)
+	}
 }
